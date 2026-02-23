@@ -33,10 +33,10 @@ t_stop = 50  # how many seconds to simulate
 history_len = 500  # how many trajectory points to display
 
 #Damping Coefficients
-b1 = 0.1 # bearing friction coefficient for pendulum 1 (linear damping)
-b2 = 0.1 # bearing friction coefficient for pendulum 2
-c1 = 0.05 # air resistance coefficient for pendulum 1 (quadratic damping)
-c2 = 0.05 # air resistance coefficient for pendulum 2
+b1 = 0.015 # bearing friction coefficient for pendulum 1 (linear damping)
+b2 = 0.01 # bearing friction coefficient for pendulum 2
+c1 = 0.02 # air resistance coefficient for pendulum 1 (quadratic damping)
+c2 = 0.03 # air resistance coefficient for pendulum 2
 
 
 def derivs(t, state):
@@ -70,20 +70,27 @@ dt = 0.01
 t = np.arange(0, t_stop, dt)
 
 # th1 and th2 are the initial angles (degrees)
-# w10 and w20 are the initial angular velocities (degrees per second)
-th1 = 89.0
-w1 = 0.0
-th2 = 89.0
-w2 = 0.0
+# w10 and w2 are the initial angular velocities (degrees per second)
+th1 = -89.5
+w1 = 0.3
+th2 = -89.45
+w2 = -0.2
 
 # initial state
 state = np.radians([th1, w1, th2, w2])
 
-# integrate the ODE using Euler's method
+#Rk4 steps
+def RK4(y, t, dt):
+    k1 = np.array(derivs(t, y))
+    k2 = np.array(derivs(t + dt/2, y + dt*k1/2))
+    k3 = np.array(derivs(t + dt/2, y + dt*k2/2))
+    k4 = np.array(derivs(t + dt, y + dt*k3))
+    return y + (dt/6) * (k1 + 2 * k2 + 2 * k3 + k4)
+# integrate the ODE using RK4 method
 y = np.empty((len(t), 4))
 y[0] = state
 for i in range(1, len(t)):
-    y[i] = y[i - 1] + derivs(t[i - 1], y[i - 1]) * dt
+    y[i] = RK4(y[i-1], t[i-1], dt)
 
 # A more accurate estimate could be obtained e.g. using scipy:
 #
