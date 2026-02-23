@@ -34,8 +34,8 @@ m1, m2 = 0.3553, 0.2379
 g = 9.81
 
 # Damping coefficients
-b1, b2 = 0.1, 0.1   # bearing friction coefficient on pendulum arms
-c1, c2 = 0.05, 0.05 # air resistance coefficient
+b1, b2 = 0.035, 0.025   # bearing friction coefficient on pendulum arms
+c1, c2 = 0.05, 0.08 # air resistance coefficient
 
 def deriv(y, t, L1, L2, m1, m2):
     """Return the first derivatives of y = theta1, z1, theta2, z2."""
@@ -64,18 +64,25 @@ def calc_E(y):
     return T + V
 
 # Maximum time, time point spacings and the time grid (all in s).
-tmax, dt = 30, 0.01
+tmax, dt = 500, 0.01
 t = np.arange(0, tmax+dt, dt)
 # Initial conditions: theta1, dtheta1/dt, theta2, dtheta2/dt.
-th1 = 89
-th2 = 89
+th1 = -89.5
+th2 = -89.45
 y0 = np.array([np.radians(th1), 0, np.radians(th2), 0])
 
-# Do the numerical integration of the equations of motion using Euler to avoid adaptive smoothing
+# Do the numerical integration of the equations of motion using RK4
+def RK4(y, t, dt):
+    k1 = np.array(deriv(y, t, L1, L2, m1, m2))
+    k2 = np.array(deriv(y + dt*k1/2, t + dt/2, L1, L2, m1, m2))
+    k3 = np.array(deriv(y + dt*k2/2, t + dt/2, L1, L2, m1, m2))
+    k4 = np.array(deriv(y + dt*k3, t + dt, L1, L2, m1, m2))
+    return y + (dt/6) * (k1 + 2 * k2 + 2 * k3 + k4)
+# integrate the ODE using RK4 method
 y = np.empty((len(t), 4))
 y[0] = y0
-for i in range (1, len(t)):
-    y[i] = y[i-1] + np.array(deriv(y[i-1], t[i-1], L1, L2, m1, m2)) * dt
+for i in range(1, len(t)):
+    y[i] = RK4(y[i-1], t[i-1], dt)
 
 
 # Unpack z and theta as a function of time
