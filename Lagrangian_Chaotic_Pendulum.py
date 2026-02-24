@@ -67,9 +67,11 @@ def calc_E(y):
 tmax, dt = 500, 0.01
 t = np.arange(0, tmax+dt, dt)
 # Initial conditions: theta1, dtheta1/dt, theta2, dtheta2/dt.
-th1 = -89.5
-th2 = -89.45
-y0 = np.array([np.radians(th1), 0, np.radians(th2), 0])
+th1 = -88    # Initial angle for arm 1
+w1 = 0.0    # Initial angular velocity for arm 1
+th2 = -90   # Initial angle for arm 2
+w2 = 0.0    # Initial angular velocity for arm 2
+y0 = np.array([np.radians(th1), w1, np.radians(th2), w2])0])
 
 # Do the numerical integration of the equations of motion using RK4
 def RK4(y, t, dt):
@@ -126,3 +128,4 @@ y2 = y1 - L2 * np.cos(theta2)
 #
 #     fig, animate, len(y), interval = dt*1000, blit=True)
 # plt.show()
+
