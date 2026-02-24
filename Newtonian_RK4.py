@@ -71,10 +71,10 @@ t = np.arange(0, t_stop, dt)
 
 # th1 and th2 are the initial angles (degrees)
 # w10 and w2 are the initial angular velocities (degrees per second)
-th1 = -89.5
-w1 = 0.3
-th2 = -89.45
-w2 = -0.2
+th1 = 269.3   # Initial angle for arm 1
+w1 = 0.977384   # Initial angular velocity for arm 1
+th2 = 268.8  # Initial angle for arm 2
+w2 = 0.488692    # Initial angular velocity for arm 2
 
 # initial state
 state = np.radians([th1, w1, th2, w2])
